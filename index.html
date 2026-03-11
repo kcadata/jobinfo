@@ -1,9 +1,82 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script>
-location.href = "https://docs.google.com/spreadsheets/d/18EJCHI-blKVEUQ7RJfxmZu5GUoWIz7i2oVcRa8yhE_M/edit?gid=0#gid=0";
-</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8">
+
+<style>
+  body {
+    font-family: sans-serif;
+    background: #f2f2f2;
+    padding: 10px;
+  }
+
+  .card {
+    background: white;
+    padding: 15px;
+    margin-bottom: 12px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+
+  .title {
+    font-weight: bold;
+    font-size: 18px;
+    margin-bottom: 6px;
+    color: #333;
+    white-space: pre-wrap; /* 줄바꿈 허용 */
+  }
+
+  .condition {
+    font-size: 14px;
+    color: #666;
+    line-height: 1.5;
+    white-space: pre-wrap; /* 시트 내 줄바꿈 반영 */
+  }
+
+  .deadline {
+    color: #e74c3c;
+    margin-top: 10px;
+    font-size: 13px;
+    font-weight: bold;
+    border-top: 1px solid #eee;
+    padding-top: 8px;
+  }
+</style>
 </head>
-<body></body>
+
+<body>
+
+<div id="jobs">데이터를 불러오는 중...</div>
+
+<script>
+  // 보내주신 주소에서 직접 추출한 정확한 ID입니다.
+  const sheetID = "18EJCHI-blKVEUQ7RJfxmZu5GUoWIz7i2oVcRa8yhE_M";
+  const sheetName = "시트1"; 
+
+  fetch(`https://opensheet.elk.sh/${sheetID}/${sheetName}`)
+    .then(res => {
+      if (!res.ok) throw new Error("데이터를 가져올 수 없습니다.");
+      return res.json();
+    })
+    .then(data => {
+      let html = "";
+      data.forEach(row => {
+        html += `
+          <div class="card">
+            <div class="title">${row.취업처 || ''}</div>
+            <div style="white-space: pre-wrap; font-size: 14px; color: #444;">${row.조건 || ''}</div>
+            <div class="deadline">${row.기한 || ''}</div>
+          </div>
+        `;
+      });
+      document.getElementById("jobs").innerHTML = html;
+    })
+    .catch(err => {
+      document.getElementById("jobs").innerHTML = "오류 발생: " + err.message;
+      console.error(err);
+    });
+</script>
+
+</body>
 </html>
